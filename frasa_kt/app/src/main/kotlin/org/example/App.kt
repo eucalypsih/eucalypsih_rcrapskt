@@ -3,13 +3,82 @@
  */
 package org.example
 
+import java.util.Scanner
+import java.util.Collections
+
 class App {
-    val greeting: String
-        get() {
-            return "Hello World!"
-        }
+    // Dipelihara agar kompatibel dengan AppTest
+    fun getGreeting(): String {
+        return "Hello World!"
+    }
 }
 
+// Data class di Kotlin secara otomatis membuat constructor, 
+// getter, setter, dan fungsi pendukung lainnya dalam satu baris.
+data class Soal(
+    val frasaJepang: String,
+    val artiBenar: String,
+    val pilihanSalah: List<String>
+)
+
 fun main() {
-    println(App().greeting)
+    val daftarSoal = listOf(
+        Soal(
+            "ご飯を食べる", 
+            "eat rice", 
+            listOf("drink water", "sleep", "walk")
+        ),
+        Soal(
+            "朝ご飯を食べる", 
+            "eat breakfast", 
+            listOf("skip breakfast", "cook", "shop")
+        )
+    )
+
+    val scanner = Scanner(System.`in`)
+    var skor = 0
+
+    println("=== GAME TEBAK ARTI BAHASA JEPANG ===")
+    println("Pilihlah jawaban yang paling tepat (1-4)!\n")
+
+    for ((i, soalSaatIni) in daftarSoal.withIndex()) {
+        println("Pertanyaan ${i + 1}: Apa arti dari \"${soalSaatIni.frasaJepang}\"?")
+
+        // Menggabungkan jawaban benar dan salah menjadi satu mutable list untuk di-shuffle
+        val semuaPilihan = mutableListOf<String>()
+        semuaPilihan.add(soalSaatIni.artiBenar)
+        semuaPilihan.addAll(soalSaatIni.pilihanSalah)
+        
+        semuaPilihan.shuffle()
+
+        for ((j, pilihan) in semuaPilihan.withIndex()) {
+            println("${j + 1}. $pilihan")
+        }
+
+        var pilihanPemain = 0
+        while (true) {
+            print("Jawaban Anda (1-4): ")
+            if (scanner.hasNextInt()) {
+                pilihanPemain = scanner.nextInt()
+                if (pilihanPemain in 1..4) {
+                    break
+                }
+            } else {
+                scanner.next() // Membuang input token non-integer
+            }
+            println("Input tidak valid! Harap masukkan angka 1 sampai 4.")
+        }
+
+        val jawabanTerpilih = semuaPilihan[pilihanPemain - 1]
+        if (jawabanTerpilih == soalSaatIni.artiBenar) {
+            println("✨ Benar sekali!\n")
+            skor += 50
+        } else {
+            println("❌ Salah! Jawaban yang benar adalah: ${soalSaatIni.artiBenar}\n")
+        }
+    }
+
+    println("=== GAME SELESAI ===")
+    println("Total Skor Anda: $skor / 100")
+    scanner.close()
 }

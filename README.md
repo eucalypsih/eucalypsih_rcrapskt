@@ -42,3 +42,23 @@ fun main() {
 }
 
 ```
+
+
+
+Opsi A: Jika menggunakan `app/build.gradle` (Format Groovy - Umum)
+Buka file `app/build.gradle` menggunakan editor teks (seperti `nano app/build.gradle`), lalu tambahkan baris konfigurasi berikut di bagian paling bawah file:
+```
+tasks.named('run') {
+    standardInput = System.in
+}
+
+```
+
+Opsi B: Jika menggunakan `app/build.gradle.kts` (Format Kotlin DSL)
+Jika file konfigurasi Anda berakhiran `.kts`, buka filenya (`nano app/build.gradle.kts`) dan tambahkan baris berikut di bagian paling bawah:
+```
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
+```
